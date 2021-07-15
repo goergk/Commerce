@@ -1,3 +1,52 @@
 body {
     padding: 10px;
+    background-color: #f7f7f7;
+}
+
+.nav{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login_container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    background-color: white;
+    border: 1px solid #dedede;
+}
+
+.register_container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 410px;
+    background-color: white;
+    border: 1px solid #dedede;
+}
+
+.form-group{
+    width: 250px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.button_container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.url_area, .title_area{
+    width: 80%;
+    height: 30px;
+}
+
+.description_area{
+    width: 80%;
+    height: 300px;
 }

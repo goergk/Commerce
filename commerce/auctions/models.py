@@ -46,3 +46,4 @@ class Listing(models.Model):
     creator =  models.ForeignKey(User, on_delete=models.CASCADE, related_name="listing_creator")
 
 
+
