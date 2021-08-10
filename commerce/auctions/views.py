@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 from .models import User
+from django.contrib.auth.decorators import login_required
 
 CATEGORIES = [
     ('toy', 'Toys'),
@@ -27,7 +28,14 @@ def index(request):
 
 
 def login_view(request):
-    if request.method == "POST":
+
+    next_page = None
+    try:
+        next_page = request.GET['next']
+    except:
+        print("next is not provided")
+
+    if request.method == "POST":            
 
         # Attempt to sign user in
         username = request.POST["username"]
@@ -37,7 +45,10 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            if next_page is not None:
+                return HttpResponseRedirect(next_page)
+            else:
+                return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "auctions/login.html", {
                 "message": "Invalid username and/or password."
@@ -78,11 +89,13 @@ def register(request):
         return render(request, "auctions/register.html")
 
 def categories(request):
-    pass
+    return render(request, "auctions/categories.html")
 
+@login_required(login_url='login')
 def watchlist(request):
-    pass
+    return render(request, "auctions/watchlist.html")
 
+@login_required(login_url='login')
 def createListing(request):
     return render(request, "auctions/create.html", {
         "listing": NewListingForm()

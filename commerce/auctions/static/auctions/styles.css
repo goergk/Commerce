@@ -1,6 +1,7 @@
 body {
     padding: 10px;
     background-color: #f7f7f7;
+    margin: 0px;
 }
 
 .nav{
@@ -29,8 +30,31 @@ body {
     border: 1px solid #dedede;
 }
 
+.body_container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.content_container{
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+} 
+
 .form-group{
     width: 250px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.create-form-group{
+    width: 80vw;
     margin-top: 15px;
     text-align: center;
 }
@@ -41,12 +65,24 @@ body {
     align-items: center;
 }
 
-.url_area, .title_area{
+.url_area, .title_area, .price_area, .select_area{
     width: 80%;
     height: 30px;
+    text-align: center;
 }
 
 .description_area{
     width: 80%;
     height: 300px;
+    text-align: center;
+    padding: 10px;
+}
+
+.btn{
+    width: 150px;
+    margin-top: 15px;
+}
+
+textarea{
+    resize: none;
 }
