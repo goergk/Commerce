@@ -4,25 +4,15 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
-from .models import User
+from .models import User, Category
 from django.contrib.auth.decorators import login_required
-
-CATEGORIES = [
-    ('toy', 'Toys'),
-    ('cloth', 'Clothes'),
-    ('electronic', 'Electronics'),
-    ('fashion', 'Fashion'),
-    ('sport', 'Sport'),
-    ('book', 'Books')
-]
-
 
 class NewListingForm(forms.Form):
     title = forms.CharField(widget=forms.Textarea(attrs={'class': 'title_area'}))
     image_url = forms.CharField(widget=forms.Textarea(attrs={'class': 'url_area'}))
     description = forms.CharField(widget=forms.Textarea(attrs={'class': 'description_area'}))
     price = forms.DecimalField(label='Starting bid', widget=forms.Textarea(attrs={'class': 'price_area'}))
-    category = forms.CharField(widget=forms.Select(choices=CATEGORIES, attrs={'class': 'select_area'}))
+    category = forms.ChoiceField(widget=forms.Select(choices=Category.CATEGORIES, attrs={'class': 'select_area'}))
 
 
 def index(request):

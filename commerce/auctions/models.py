@@ -11,7 +11,16 @@ class User(AbstractUser):
         return f"{self.username}"
 
 class Category(models.Model):
+    CATEGORIES = [
+    ('toy', 'Toys'),
+    ('cloth', 'Clothes'),
+    ('electronic', 'Electronics'),
+    ('home', 'Home'),
+    ('sport', 'Sport'),
+    ('book', 'Books')
+    ]
     id = models.AutoField(primary_key=True)
+    category = models.CharField(max_length=16, choices=CATEGORIES)
     name = models.CharField(max_length=64)
 
     def __str__(self):
@@ -22,11 +31,12 @@ class Listing(models.Model):
     title = models.CharField(max_length=64)
     description = models.CharField(max_length=2500)
     price = models.DecimalField(max_digits=7, decimal_places=2)
-    image_url = models.CharField(max_length=500)
+    image_url = models.CharField(max_length=500, blank=True)
     creation_date = models.DateTimeField(auto_now_add=True)
-    closing_date = models.DateTimeField()
-    creator =  models.ForeignKey(User, on_delete=models.CASCADE, related_name="listing_creator")
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="product_categories")
+    closing_date = models.DateTimeField(blank=True)
+    closed = models.BooleanField(default=False)
+    creator =  models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings_creators")
+    category = models.ManyToManyField(Category, related_name="listings")
     
     def __str__(self):
         f"{self.title} by {self.creator}"
@@ -34,9 +44,9 @@ class Listing(models.Model):
 class Bid(models.Model):
     id = models.AutoField(primary_key=True)
     value = models.DecimalField(max_digits=7, decimal_places=2)
-    date = models.DateTimeField()
+    date = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bidders")
-    bid = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
 
     def __str__(self):
         f"Last bid: {self.date} by {self.user}. Bid value: {self.value}$."
@@ -46,7 +56,7 @@ class Comment(models.Model):
     topic = models.CharField(max_length=64)
     content = models.CharField(max_length=2500)
     date = models.DateTimeField()
-    commentator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="original_poster")
+    commentator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commentators")
     comment = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
 
     def __str__(self):
