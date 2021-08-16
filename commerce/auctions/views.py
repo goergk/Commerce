@@ -12,7 +12,8 @@ class NewListingForm(forms.Form):
     image_url = forms.CharField(widget=forms.Textarea(attrs={'class': 'url_area'}))
     description = forms.CharField(widget=forms.Textarea(attrs={'class': 'description_area'}))
     price = forms.DecimalField(label='Starting bid', widget=forms.Textarea(attrs={'class': 'price_area'}))
-    category = forms.ChoiceField(widget=forms.Select(choices=Category.CATEGORIES, attrs={'class': 'select_area'}))
+    category = forms.ModelMultipleChoiceField(label='Categories', queryset=Category.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'select_area'}))
 
 
 def index(request):

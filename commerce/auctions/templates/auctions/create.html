@@ -10,38 +10,36 @@
             <form action="#" method="POST">
                 {% csrf_token %}
                 <div class="create-form-group">
-                    <label id="title_label">{{listing.title.label_tag}}</label>
+                    <label id="title_label"><b>{{listing.title.label_tag}}</b></label>
                     <br> 
                     {{listing.title}}
                     <br> 
                 </div>
                 
                 <div class="create-form-group">
-                    <label id="image_url">{{listing.image_url.label_tag}}</label>
+                    <label id="image_url"><b>{{listing.image_url.label_tag}}</b></label>
                     <br> 
                     {{listing.image_url}}
                     <br>
                 </div>
                 
                 <div class="create-form-group">
-                    <label id="description">{{listing.description.label_tag}}</label>
+                    <label id="description"><b>{{listing.description.label_tag}}</b></label>
                     <br> 
                     {{listing.description}}
                     <br>
                 </div>
                  
                 <div class="create-form-group">
-                    <label id="price">{{listing.price.label_tag}}</label>
+                    <label id="price"><b>{{listing.price.label_tag}}</b></label>
                     <br> 
                     {{listing.price}}
                     <br>
                 </div>
                 
-                <div class="create-form-group">
-                    <label id="category">{{listing.category.label_tag}}</label>
-                    <br> 
+                <div class="checkbox-form-group">
+                    <label id="category"><b>{{listing.category.label_tag}}</b></label>
                     {{listing.category}}
-                    <br>
                 </div>
                   
                 <div class="button_container">

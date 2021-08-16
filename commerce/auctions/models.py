@@ -11,20 +11,11 @@ class User(AbstractUser):
         return f"{self.username}"
 
 class Category(models.Model):
-    CATEGORIES = [
-    ('toy', 'Toys'),
-    ('cloth', 'Clothes'),
-    ('electronic', 'Electronics'),
-    ('home', 'Home'),
-    ('sport', 'Sport'),
-    ('book', 'Books')
-    ]
     id = models.AutoField(primary_key=True)
-    category = models.CharField(max_length=16, choices=CATEGORIES)
     name = models.CharField(max_length=64)
 
     def __str__(self):
-        f"{self.name}"
+        return f'{self.name}'
 
 class Listing(models.Model):
     id = models.AutoField(primary_key=True)
@@ -36,10 +27,11 @@ class Listing(models.Model):
     closing_date = models.DateTimeField(blank=True)
     closed = models.BooleanField(default=False)
     creator =  models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings_creators")
+    follower = models.ManyToManyField(User, related_name="followers")
     category = models.ManyToManyField(Category, related_name="listings")
     
     def __str__(self):
-        f"{self.title} by {self.creator}"
+        return f"{self.title} by {self.creator}"
 
 class Bid(models.Model):
     id = models.AutoField(primary_key=True)
@@ -49,7 +41,7 @@ class Bid(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
 
     def __str__(self):
-        f"Last bid: {self.date} by {self.user}. Bid value: {self.value}$."
+        return f"Last bid: {self.date} by {self.user}. Bid value: {self.value}$."
 
 class Comment(models.Model):
     id = models.AutoField(primary_key=True)
@@ -57,10 +49,10 @@ class Comment(models.Model):
     content = models.CharField(max_length=2500)
     date = models.DateTimeField()
     commentator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commentators")
-    comment = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
 
     def __str__(self):
-        f"{self.topic}: \n{self.content}"
+        return f"{self.topic}: \n{self.content}"
 
 
 
