@@ -3,8 +3,17 @@
 {% block body %}
     <div class="body_container">
         <h2>Categories</h2>
-        <div class="content_container">
-            TODO 
+        <div class="categories_container">
+            {% for category in categories %}
+                <a href="#">
+                    <div class="category_container">
+                        <h2>{{category.name}}</h2>
+                        <hr/>
+                        <img src={{ category.image_url }} alt={{ category.name }} class="category_image"
+                        style="width: 100%;">
+                    </div>
+                </a>                            
+            {% endfor %}
         </div> 
     </div>
 {% endblock %}

@@ -6,3 +6,7 @@ from .models import *
 admin.site.register(Listing)
 admin.site.register(Comment)
 admin.site.register(Bid)
+
+# Optional to add new category
+# admin.site.register(Category)
+

@@ -4,7 +4,15 @@
     <div class="body_container">
         <h2>Active Listings</h2>
         <div class="content_container">
-            TODO 
+            {% for listing in listings %}
+                <a href="#">
+                    <div>
+                        <h2>{{listing.title}}</h2>
+                        <hr/>
+                        <img src={{ listing.image_url }} alt={{ listing.title }}>
+                    </div>
+                </a>                            
+            {% endfor %}
         </div> 
     </div>
 {% endblock %}

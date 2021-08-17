@@ -13,6 +13,7 @@ class User(AbstractUser):
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=64)
+    image_url = models.CharField(max_length=500, blank=True)
 
     def __str__(self):
         return f'{self.name}'
@@ -24,10 +25,10 @@ class Listing(models.Model):
     price = models.DecimalField(max_digits=7, decimal_places=2)
     image_url = models.CharField(max_length=500, blank=True)
     creation_date = models.DateTimeField(auto_now_add=True)
-    closing_date = models.DateTimeField(blank=True)
+    closing_date = models.DateTimeField(null=True, blank=True)
     closed = models.BooleanField(default=False)
     creator =  models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings_creators")
-    follower = models.ManyToManyField(User, related_name="followers")
+    follower = models.ManyToManyField(User, related_name="followers", blank=True)
     category = models.ManyToManyField(Category, related_name="listings")
     
     def __str__(self):

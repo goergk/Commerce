@@ -45,6 +45,11 @@ body {
     justify-content: center;
     align-items: center;
     width: 100%;
+    margin-bottom: 50px;
+    padding: 100px 0px 100px 0px;
+    box-shadow: 0px 30px 25px 0px rgba(0,0,0,0.3);
+    -webkit-box-shadow: 0px 30px 25px 0px rgba(0,0,0,0.3);
+    -moz-box-shadow: 0x 30px 25px 0px rgba(0,0,0,0.3); 
 } 
 
 .form-group{
@@ -105,4 +110,36 @@ body {
 
 textarea{
     resize: none;
+}
+
+.categories_container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    background-color: white;
+    width: 100%;
+    padding: 100px 0px 100px 0px;
+    margin-bottom: 50px;
+    box-shadow: 0px 30px 25px 0px rgba(0,0,0,0.3);
+    -webkit-box-shadow: 0px 30px 25px 0px rgba(0,0,0,0.3);
+    -moz-box-shadow: 0x 30px 25px 0px rgba(0,0,0,0.3); 
+}
+
+.category_container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #dedede;
+    width: 350px;
+    padding-top: 15px;
+    margin: 15px 15px 0px 15px;
+    border-radius: 5px;
+}
+
+.category_container:hover{
+    -webkit-box-shadow: 0px 5px 5px 5px #e0e0e0;
+    box-shadow: 0px 5px 5px 5px #e0e0e0;
 }

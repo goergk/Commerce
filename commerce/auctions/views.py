@@ -4,20 +4,22 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
-from .models import User, Category
+from .models import *
 from django.contrib.auth.decorators import login_required
 
 class NewListingForm(forms.Form):
     title = forms.CharField(widget=forms.Textarea(attrs={'class': 'title_area'}))
     image_url = forms.CharField(widget=forms.Textarea(attrs={'class': 'url_area'}))
     description = forms.CharField(widget=forms.Textarea(attrs={'class': 'description_area'}))
-    price = forms.DecimalField(label='Starting bid', widget=forms.Textarea(attrs={'class': 'price_area'}))
+    price = forms.DecimalField(label='Starting bid', widget=forms.NumberInput(attrs={'class': 'price_area'}))
     category = forms.ModelMultipleChoiceField(label='Categories', queryset=Category.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'select_area'}))
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html", {
+        "listings": Listing.objects.all()
+    })
 
 
 def login_view(request):
@@ -83,7 +85,9 @@ def register(request):
 
 
 def categories(request):
-    return render(request, "auctions/categories.html")
+    return render(request, "auctions/categories.html", {
+        "categories": Category.objects.all()
+    })
 
 
 @login_required(login_url='login')
