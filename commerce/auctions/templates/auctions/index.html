@@ -5,11 +5,30 @@
         <h2>Active Listings</h2>
         <div class="content_container">
             {% for listing in listings %}
-                <a href="#">
-                    <div>
-                        <h2>{{listing.title}}</h2>
+                <a href="#" style="text-decoration: none;">
+                    <div class="Listing_container">
+                        <div>
+                            <h2 class="listing_title">{{listing.title}}</h2>
+                        </div>
                         <hr/>
-                        <img src={{ listing.image_url }} alt={{ listing.title }}>
+                        <div class="listing_content_container">
+                            <div class="listing_image_container">
+                                <img src={{ listing.image_url }} alt={{ listing.title }}
+                                class="listing_image">
+                            </div>
+                            <div class="listing_desc_container">
+                                <h3 style="color: black">Price: {{ listing.price }}$</h3>
+                                <p style="color: black">
+                                    {{ listing.description }}
+                                </p>
+                                <p style="color: rgb(119, 119, 119)">
+                                    {{ listing.creation_date }}
+                                </p>
+                                <p style="color: rgb(119, 119, 119)">
+                                    Seller: <b>{{ listing.creator }}</b>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </a>                            
             {% endfor %}
