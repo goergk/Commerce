@@ -1,0 +1,39 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div class="body_container">
+        <h2>Listing id {{ listing.id }}</h2>
+        <div class="content_container">
+            <div class="Listing_">
+                <div class="Listing_title_">
+                    <h2>{{listing.title}}</h2>
+                </div>
+                <hr/>
+                <div class="listing_content_container_2">
+                    <div class="listing_image_container_2">
+                        <img src={{ listing.image_url }} alt={{ listing.title }}
+                        class="listing_image_2">
+                    </div>
+                    <div class="container_2">
+                        <div class="desc_container_2">
+                            <h3 style="color: black">Information:</h3>
+                            <h5 style="color: black">
+                                {{ listing.description }}
+                            </h5>
+                            <p style="color: rgb(119, 119, 119); margin-top: 50px">
+                                Created {{ listing.creation_date }} by <b>{{ listing.creator }}</b>
+                            </p>
+                        </div>
+                        <div class="bids_container">
+                            <h3>Current price:  <b style="color:red">{{ listing.price }}$</b></h3>
+                            <h6 style="color: rgb(119, 119, 119)">Starting price: {{ listing.price }}$</h6>
+                            <p style="margin-top: 25px"><b>Place your bid:</b></p>
+                            {{ bid.bid_value }}
+                            <input type="submit" class="btn btn-dark create_button" value="Bid">
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div> 
+    </div>
+{% endblock %}

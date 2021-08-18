@@ -15,10 +15,13 @@ class NewListingForm(forms.Form):
     category = forms.ModelMultipleChoiceField(label='Categories', queryset=Category.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'select_area'}))
 
+class NewBidForm(forms.Form):
+    bid_value = forms.DecimalField(widget=forms.NumberInput(attrs={'class': 'bid_area'}))
 
 def index(request):
+    listings = Listing.objects.filter(closed=False)
     return render(request, "auctions/index.html", {
-        "listings": Listing.objects.all()
+        "listings": listings
     })
 
 
@@ -89,6 +92,18 @@ def categories(request):
         "categories": Category.objects.all()
     })
 
+def listing(request, listing_id):
+    listing = Listing.objects.get(pk=listing_id)
+    return render(request, "auctions/listing.html", {
+        "listing": listing,
+        "bid": NewBidForm()
+    })
+
+def category(request, category_name):
+    listings = Listing.objects.filter(category__name=category_name)
+    return render(request, "auctions/index.html", {
+        "listings": listings
+    })
 
 @login_required(login_url='login')
 def watchlist(request):
@@ -100,4 +115,6 @@ def createListing(request):
     return render(request, "auctions/create.html", {
         "listing": NewListingForm()
     })
+
+
 
