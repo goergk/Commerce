@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
+from django.db.models import Max
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
@@ -16,7 +17,11 @@ class NewListingForm(forms.Form):
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'select_area'}))
 
 class NewBidForm(forms.Form):
-    bid_value = forms.DecimalField(widget=forms.NumberInput(attrs={'class': 'bid_area'}))
+    bid_value = forms.DecimalField(widget=forms.NumberInput(attrs={'class': 'bid_area', 'placeholder': 'Bid'}))
+
+class NewCommentForm(forms.Form):
+    topic = forms.CharField(widget=forms.Textarea(attrs={'class': 'topic_area'}))
+    content = forms.CharField(widget=forms.Textarea(attrs={'class': 'content_area'}))
 
 def index(request):
     listings = Listing.objects.filter(closed=False)
@@ -94,8 +99,16 @@ def categories(request):
 
 def listing(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
+    categories = listing.category.all()
+    bids = listing.bids.all()
+    temp = listing.bids.aggregate(Max('value'))
+    bid = listing.bids.filter(value=temp['value__max']).first()
+
     return render(request, "auctions/listing.html", {
         "listing": listing,
+        "bids": bids,
+        "winning": bid,
+        "categories": categories,
         "bid": NewBidForm()
     })
 

@@ -16,8 +16,8 @@
                     </div>
                     <div class="container_2">
                         <div class="desc_container_2">
-                            <h3 style="color: black">Information:</h3>
-                            <h5 style="color: black">
+                            <h3>Information:</h3>
+                            <h5>
                                 {{ listing.description }}
                             </h5>
                             <p style="color: rgb(119, 119, 119); margin-top: 50px">
@@ -25,12 +25,49 @@
                             </p>
                         </div>
                         <div class="bids_container">
-                            <h3>Current price:  <b style="color:red">{{ listing.price }}$</b></h3>
-                            <h6 style="color: rgb(119, 119, 119)">Starting price: {{ listing.price }}$</h6>
-                            <p style="margin-top: 25px"><b>Place your bid:</b></p>
-                            {{ bid.bid_value }}
-                            <input type="submit" class="btn btn-dark create_button" value="Bid">
+                            {% if user.is_authenticated %}
+                                <h3>Current price:  <b style="color:red">
+                                    {% if not winning.value %}
+                                        {{ listing.price }}$
+                                    {% else %}
+                                        {{ winning.value }}$
+                                    {% endif %}
+                                </b></h3>
+                                <h6 style="color: rgb(119, 119, 119)">Starting price: {{ listing.price }}$</h6>
+                                <p style="margin-top: 25px"><b>Place your bid:</b></p>
+                                <form action="#" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                    {{ bid.bid_value }}
+                                    <input type="submit" class="btn btn-dark create_button" value="Bid">
+                                </form>
+                                <p style="margin-top:40px;">
+                                    {{ bids.count }} bid(s) so far.
+                                </p> 
+                                <p>
+                                    {% if winning.value %}
+                                        Currently winning: <b style="color:red">{{ winning.user }}</b> 
+                                    {% endif %}
+                                </p>
+                            {% else %}
+                                <div class="err_container_1">
+                                    <h3>You must be logged in to place your bids</h3>
+                                </div>
+                            {% endif %}
                         </div>
+                    </div>
+                    <div style="width: 80%; margin-top: 25px; padding-bottom: 50px; border-bottom: 1px solid #e0e0e0;">
+                        <div class="categories_container_2">
+                            Tags:             
+                            {% for category in categories %}
+                                <div class="category_tag_container">
+                                    <p class="category_tag_content">{{ category }}</p>
+                                </div>
+                            {% empty %}
+                                No categories assigned to this product.              
+                            {% endfor %}
+                        </div> 
+                    </div>
+                    <div style="display: flex; width: 80%; margin-top: 15px;">
+                        <h3>Comments:</h3>
                     </div>
                 </div>
             </div> 

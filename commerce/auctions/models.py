@@ -42,7 +42,7 @@ class Bid(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
 
     def __str__(self):
-        return f"Last bid: {self.date} by {self.user}. Bid value: {self.value}$."
+        return f"Last bid: {self.value}$ by {self.user}."
 
 class Comment(models.Model):
     id = models.AutoField(primary_key=True)

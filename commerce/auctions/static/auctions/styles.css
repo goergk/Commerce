@@ -229,6 +229,15 @@ textarea{
     text-align: center;
 }
 
+.err_container_1{ 
+    width: 100%; 
+    min-height: 400px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    color: rgb(212, 11, 11);
+}
+
 .desc_container{
     width: 25vw;
 }
@@ -237,6 +246,29 @@ textarea{
     width: 45%;
     min-height: 200px;
     padding-right: 1vw;
+}
+
+.categories_container_2{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.category_tag_container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    padding: 0px 5px;
+    border: 1px solid rgb(187, 187, 187);
+    background-color: rgb(119, 119, 119);
+    border-radius: 5px;
+}
+
+.category_tag_content{
+    color: white;
+    margin: 0px;
+    padding: 0px;
 }
 
 @media (max-width: 924px){
@@ -264,6 +296,7 @@ textarea{
 
     .bids_container{
         width: 80%;
+        margin-top: 15px;
     }
 
     .listing_image_2{
