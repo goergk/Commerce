@@ -66,8 +66,39 @@
                             {% endfor %}
                         </div> 
                     </div>
-                    <div style="display: flex; width: 80%; margin-top: 15px;">
-                        <h3>Comments:</h3>
+                    <div style="width: 80%; margin-top: 15px">
+                        <div class="comments_container">
+                            <h3 style="margin-bottom: 25px;">({{ comments.count }}) 
+                                {% if comments.count == 1 %}
+                                    Comment:
+                                {% else %}
+                                    Comments:
+                                {% endif %}
+                            </h3>
+                            {% if user.is_authenticated %}
+                                <form action="#">
+                                    <div class="new_comment">                                
+                                        {{ comment.topic }}
+                                        {{ comment.content }}
+                                        <input type="submit" class="btn btn-dark comment_button" value="New comment">
+                                    </div>
+                                </form>
+                            {% endif %}
+
+                            {% for comment in comments %}
+                                <div class="comment_container">
+                                    <h5>
+                                        <b>{{ comment.topic }}</b>
+                                    </h5>
+                                    <p>
+                                        <i>{{ comment.content }}</i>
+                                    </p>
+                                    <p style="font-size: 14px; display: flex; justify-content: flex-end; margin: 10px 0px 10px 0px;">
+                                        {{ comment.date }} by&nbsp; <b>{{ comment.commentator }}</b>
+                                    </p>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div> 

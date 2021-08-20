@@ -76,14 +76,17 @@ body {
     text-align: center;
 }
 
-.select_area{
-    width: 80%;
+ .select_area{
+    width: 100px;
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    text-align: none;
+    flex-direction: column;
+    align-items: flex-start; 
     list-style: none;
+} 
+
+.select_area input[type=checkbox]{
+    width: 15px;
+    height: 15px;
 }
 
 .checkbox-form-group{
@@ -95,6 +98,16 @@ body {
     margin-top: 15px;
     text-align: center;
 }
+
+ .category-form-container{
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    text-align: none;
+    list-style: none;
+} 
 
 .description_area{
     width: 80%;
@@ -271,6 +284,38 @@ textarea{
     padding: 0px;
 }
 
+.comments_container{
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.new_comment{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding-bottom: 45px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgb(187, 187, 187);
+}
+
+.topic_area{
+    height: 32px;
+    margin-bottom: -1px;
+}
+
+.comment_container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgb(187, 187, 187);
+}
+
 @media (max-width: 924px){
     .listing_content_container{
         flex-direction: column;
@@ -301,6 +346,10 @@ textarea{
 
     .listing_image_2{
         height: 60vw;
+    }
+
+    .comments_container{
+        width: 100%;
     }
     
 }

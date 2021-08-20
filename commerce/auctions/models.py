@@ -47,8 +47,8 @@ class Bid(models.Model):
 class Comment(models.Model):
     id = models.AutoField(primary_key=True)
     topic = models.CharField(max_length=64)
-    content = models.CharField(max_length=2500)
-    date = models.DateTimeField()
+    content = models.CharField(max_length=500)
+    date = models.DateTimeField(auto_now_add=True)
     commentator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commentators")
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
 

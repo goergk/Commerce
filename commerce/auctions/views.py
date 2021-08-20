@@ -20,8 +20,8 @@ class NewBidForm(forms.Form):
     bid_value = forms.DecimalField(widget=forms.NumberInput(attrs={'class': 'bid_area', 'placeholder': 'Bid'}))
 
 class NewCommentForm(forms.Form):
-    topic = forms.CharField(widget=forms.Textarea(attrs={'class': 'topic_area'}))
-    content = forms.CharField(widget=forms.Textarea(attrs={'class': 'content_area'}))
+    topic = forms.CharField(widget=forms.Textarea(attrs={'class': 'topic_area', 'placeholder': 'Topic'}))
+    content = forms.CharField(widget=forms.Textarea(attrs={'class': 'content_area', 'placeholder': 'Content'}))
 
 def index(request):
     listings = Listing.objects.filter(closed=False)
@@ -100,6 +100,7 @@ def categories(request):
 def listing(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
     categories = listing.category.all()
+    comments = listing.comments.all()
     bids = listing.bids.all()
     temp = listing.bids.aggregate(Max('value'))
     bid = listing.bids.filter(value=temp['value__max']).first()
@@ -109,6 +110,8 @@ def listing(request, listing_id):
         "bids": bids,
         "winning": bid,
         "categories": categories,
+        "comment": NewCommentForm(),
+        "comments": comments,
         "bid": NewBidForm()
     })
 
