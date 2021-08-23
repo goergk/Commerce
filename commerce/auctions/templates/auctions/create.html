@@ -7,7 +7,7 @@
         <h2>Create new Listing</h2>
 
         <div class="content_container">
-            <form action="#" method="POST">
+            <form action="{% url 'newListing' %}" method="POST">
                 {% csrf_token %}
                 <div class="create-form-group">
                     <label id="title_label"><b>{{listing.title.label_tag}}</b></label>

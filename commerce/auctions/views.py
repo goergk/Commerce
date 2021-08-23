@@ -7,13 +7,14 @@ from django.urls import reverse
 from django import forms
 from .models import *
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 class NewListingForm(forms.Form):
     title = forms.CharField(widget=forms.Textarea(attrs={'class': 'title_area'}))
-    image_url = forms.CharField(widget=forms.Textarea(attrs={'class': 'url_area'}))
+    image_url = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'url_area'}))
     description = forms.CharField(widget=forms.Textarea(attrs={'class': 'description_area'}))
     price = forms.DecimalField(label='Starting bid', widget=forms.NumberInput(attrs={'class': 'price_area'}))
-    category = forms.ModelMultipleChoiceField(label='Categories', queryset=Category.objects.all(),
+    category = forms.ModelMultipleChoiceField(required=False, label='Categories', queryset=Category.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'select_area'}))
 
 class NewBidForm(forms.Form):
@@ -120,6 +121,78 @@ def category(request, category_name):
     return render(request, "auctions/index.html", {
         "listings": listings
     })
+
+def comment(request, listing_id):
+    if request.method == "POST":
+        listing = Listing.objects.get(pk=listing_id)
+        current_user = request.user
+        user = User.objects.get(pk=current_user.id)
+
+        form = NewCommentForm(request.POST)
+        if form.is_valid():
+            new_comment = Comment()
+            new_comment.topic = form.cleaned_data["topic"]
+            new_comment.content = form.cleaned_data["content"]
+            new_comment.commentator = user
+            new_comment.listing = listing
+            new_comment.save()
+
+        return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+
+def bid(request, listing_id):
+    if request.method == "POST":
+        listing = Listing.objects.get(pk=listing_id)
+        current_user = request.user
+        user = User.objects.get(pk=current_user.id)
+        bids = listing.bids.all()
+
+        if not bids:
+            bid_value = listing.price
+        else:
+            temp = listing.bids.aggregate(Max('value'))
+            bid = listing.bids.filter(value=temp['value__max']).first()
+            bid_value = bid.value
+
+        form = NewBidForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data["bid_value"] <= listing.price or form.cleaned_data["bid_value"] <= bid_value:
+                messages.error(request, 'Your bid value must be higher than actual price!')
+            elif bid_value != listing.price:
+                if bid.user == request.user:
+                    messages.error(request, 'You cannot bid on a winning auction!')
+                else:
+                    new_bid = Bid()
+                    new_bid.value = form.cleaned_data["bid_value"]
+                    new_bid.user = user
+                    new_bid.listing = listing
+                    new_bid.save()
+            else:
+                new_bid = Bid()
+                new_bid.value = form.cleaned_data["bid_value"]
+                new_bid.user = user
+                new_bid.listing = listing
+                new_bid.save()
+
+        return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+
+def newListing(request):
+    if request.method == "POST":
+        current_user = request.user
+        user = User.objects.get(pk=current_user.id)
+
+        form = NewListingForm(request.POST)
+        if form.is_valid():
+            form_categories = form.cleaned_data["category"]
+            categories = Category.objects.filter(category__in=form_categories)
+
+            new_listing = Listing()
+            new_listing.title = form.cleaned_data["title"]
+            new_listing.description = form.cleaned_data["description"]
+            new_listing.price = form.cleaned_data["price"]
+            new_listing.image_url = form.cleaned_data["image_url"]
+            new_listing.category.set(categories)
+            new_listing.creator = user
+            new_listing.save()
 
 @login_required(login_url='login')
 def watchlist(request):

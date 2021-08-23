@@ -29,7 +29,7 @@ class Listing(models.Model):
     closed = models.BooleanField(default=False)
     creator =  models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings_creators")
     follower = models.ManyToManyField(User, related_name="followers", blank=True)
-    category = models.ManyToManyField(Category, related_name="listings")
+    category = models.ManyToManyField(Category, related_name="listings", blank=True)
     
     def __str__(self):
         return f"{self.title} by {self.creator}"

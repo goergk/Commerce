@@ -25,33 +25,46 @@
                             </p>
                         </div>
                         <div class="bids_container">
-                            {% if user.is_authenticated %}
-                                <h3>Current price:  <b style="color:red">
-                                    {% if not winning.value %}
-                                        {{ listing.price }}$
-                                    {% else %}
-                                        {{ winning.value }}$
-                                    {% endif %}
-                                </b></h3>
-                                <h6 style="color: rgb(119, 119, 119)">Starting price: {{ listing.price }}$</h6>
-                                <p style="margin-top: 25px"><b>Place your bid:</b></p>
-                                <form action="#" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <h3>Current price:  <b style="color:red">
+                                {% if not winning.value %}
+                                    {{ listing.price }}$
+                                {% else %}
+                                    {{ winning.value }}$
+                                {% endif %}
+                            </b></h3>
+                            <h6 style="color: rgb(119, 119, 119)">Starting price: {{ listing.price }}$</h6>
+                            <p style="margin-top: 25px"><b>Place your bid:</b></p>
+                            {% if messages %}
+                            <ul class="messages">
+                                {% for message in messages %}
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %} 
+                                style="color: red">{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+
+                            {% if not user.is_authenticated %}
+                                <h6 style="color: red">You must be logged in to place your bids</h6>
+                            {% elif listing.creator == request.user %}
+                                <h6 style="color: red">You cannot bid on an auction you have created.</h6>
+                            {% else %}
+                                <form action="{% url 'bid' listing.id %}" 
+                                style="display: flex; flex-direction: column; justify-content: center; align-items: center;"
+                                method="POST">
+                                    {% csrf_token %}
                                     {{ bid.bid_value }}
                                     <input type="submit" class="btn btn-dark create_button" value="Bid">
                                 </form>
-                                <p style="margin-top:40px;">
-                                    {{ bids.count }} bid(s) so far.
-                                </p> 
-                                <p>
-                                    {% if winning.value %}
-                                        Currently winning: <b style="color:red">{{ winning.user }}</b> 
-                                    {% endif %}
-                                </p>
-                            {% else %}
-                                <div class="err_container_1">
-                                    <h3>You must be logged in to place your bids</h3>
-                                </div>
                             {% endif %}
+
+                            <p style="margin-top:40px;">
+                                {{ bids.count }} bid(s) so far.
+                            </p> 
+                            <p>
+                                {% if winning.value %}
+                                    Currently winning: <b style="color:red">{{ winning.user }}</b> 
+                                {% endif %}
+                            </p>
                         </div>
                     </div>
                     <div style="width: 80%; margin-top: 25px; padding-bottom: 50px; border-bottom: 1px solid #e0e0e0;">
@@ -76,7 +89,8 @@
                                 {% endif %}
                             </h3>
                             {% if user.is_authenticated %}
-                                <form action="#">
+                                <form action="{% url 'comment' listing.id %}" method="POST">
+                                    {% csrf_token %}
                                     <div class="new_comment">                                
                                         {{ comment.topic }}
                                         {{ comment.content }}
