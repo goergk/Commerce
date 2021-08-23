@@ -17,6 +17,8 @@ class NewListingForm(forms.Form):
     category = forms.ModelMultipleChoiceField(required=False, label='Categories', queryset=Category.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'select_area'}))
 
+    
+
 class NewBidForm(forms.Form):
     bid_value = forms.DecimalField(widget=forms.NumberInput(attrs={'class': 'bid_area', 'placeholder': 'Bid'}))
 
@@ -182,17 +184,22 @@ def newListing(request):
 
         form = NewListingForm(request.POST)
         if form.is_valid():
-            form_categories = form.cleaned_data["category"]
-            categories = Category.objects.filter(category__in=form_categories)
+            categories = form.cleaned_data["category"]
 
             new_listing = Listing()
             new_listing.title = form.cleaned_data["title"]
             new_listing.description = form.cleaned_data["description"]
             new_listing.price = form.cleaned_data["price"]
             new_listing.image_url = form.cleaned_data["image_url"]
-            new_listing.category.set(categories)
             new_listing.creator = user
             new_listing.save()
+
+            for category in categories.iterator():
+                new_listing.category.add(category)
+            new_listing.save()
+            
+            return HttpResponseRedirect(reverse("listing", args=(new_listing.id,)))
+        return HttpResponseRedirect(reverse("createListing"))
 
 @login_required(login_url='login')
 def watchlist(request):

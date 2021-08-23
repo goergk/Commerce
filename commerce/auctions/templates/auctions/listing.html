@@ -11,8 +11,12 @@
                 <hr/>
                 <div class="listing_content_container_2">
                     <div class="listing_image_container_2">
-                        <img src={{ listing.image_url }} alt={{ listing.title }}
-                        class="listing_image_2">
+                        {% if not listing.image_url %}
+                            <h3 style="color: red">No photo</h3>
+                        {% else %}
+                            <img src={{ listing.image_url }} alt={{ listing.title }}
+                            class="listing_image_2">
+                        {% endif %} 
                     </div>
                     <div class="container_2">
                         <div class="desc_container_2">
