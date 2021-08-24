@@ -28,6 +28,7 @@ class Listing(models.Model):
     closing_date = models.DateTimeField(null=True, blank=True)
     closed = models.BooleanField(default=False)
     creator =  models.ForeignKey(User, on_delete=models.CASCADE, related_name="listing_creator")
+    winner =  models.ForeignKey(User, on_delete=models.CASCADE, related_name="listing_winner", blank=True, null=True)
     follower = models.ManyToManyField(User, related_name="watchlist_listings", blank=True)
     category = models.ManyToManyField(Category, related_name="listings", blank=True)
     

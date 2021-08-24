@@ -331,7 +331,7 @@ textarea{
     margin-right: 10px;
 }
 
-.follow_icon{
+.listing_icon{
     width: 28px;
     height: 28px;
     float: right;
@@ -367,6 +367,7 @@ textarea{
 
     .listing_image_2{
         height: 60vw;
+        max-width: 100%;
     }
 
     .comments_container{

@@ -13,7 +13,7 @@ class NewListingForm(forms.Form):
     title = forms.CharField(widget=forms.Textarea(attrs={'class': 'title_area'}))
     image_url = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'url_area'}))
     description = forms.CharField(widget=forms.Textarea(attrs={'class': 'description_area'}))
-    price = forms.DecimalField(label='Starting bid', widget=forms.NumberInput(attrs={'class': 'price_area'}))
+    price = forms.DecimalField(label='Starting bid', min_value=0.01, widget=forms.NumberInput(attrs={'class': 'price_area'}))
     category = forms.ModelMultipleChoiceField(required=False, label='Categories', queryset=Category.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'select_area'}))
 
@@ -107,14 +107,14 @@ def listing(request, listing_id):
     bids = listing.bids.all()
     temp = listing.bids.aggregate(Max('value'))
     bid = listing.bids.filter(value=temp['value__max']).first()
+    on_watchlist = False
 
-    user = request.user
-    watchlist = user.watchlist_listings.all()
+    if request.user.is_authenticated:
+        user = request.user
+        watchlist = user.watchlist_listings.all()
 
-    if listing in watchlist:
-        on_watchlist = True
-    else:
-        on_watchlist = False
+        if listing in watchlist:
+            on_watchlist = True
 
     return render(request, "auctions/listing.html", {
         "listing": listing,
@@ -186,6 +186,21 @@ def bid(request, listing_id):
 
         return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
 
+def close(request, listing_id):
+    listing = Listing.objects.get(pk=listing_id)
+    bids = listing.bids.all()
+
+    if bids:
+        temp = listing.bids.aggregate(Max('value'))
+        biggest_bid = listing.bids.filter(value=temp['value__max']).first()
+        user = User.objects.get(pk=biggest_bid.user.id)
+        listing.winner = user
+
+    listing.closed = True
+    listing.save()
+
+    return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+
 def newListing(request):
     if request.method == "POST":
         current_user = request.user
@@ -201,6 +216,8 @@ def newListing(request):
             new_listing.price = form.cleaned_data["price"]
             new_listing.image_url = form.cleaned_data["image_url"]
             new_listing.creator = user
+            new_listing.save()
+            new_listing.follower.add(user)
             new_listing.save()
 
             for category in categories.iterator():

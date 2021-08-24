@@ -10,17 +10,32 @@
                     <h2>{{listing.title}}</h2>
                 </div>
                 <div class="listing_content_container_2">
-                        <div class="icon_container">
-                            <a href="{% url 'AddOrDelete' listing.id %}" style="text-decoration: none;">
-                                {% if not on_watchlist %}                              
-                                    <span class="icon_subtitle"><b>Add to watchlist</b></span>
-                                    <img src="{% static "auctions/star_1.svg" %}" alt="follow" class="follow_icon">
-                                {% else %}
-                                    <span class="icon_subtitle"><b>Delete from watchlist</b></span>
-                                    <img src="{% static "auctions/star_2.svg" %}" alt="follow" class="follow_icon">
-                                {% endif %}
-                             </a>
-                        </div>
+                    {% if user.is_authenticated %}
+                    <div class="icon_container">
+                        <a href="{% url 'AddOrDelete' listing.id %}" style="text-decoration: none;">
+                            {% if not on_watchlist %}                              
+                                <span class="icon_subtitle"><b>Add to watchlist</b></span>
+                                <img src="{% static "auctions/star_1.svg" %}" alt="follow" class="listing_icon">
+                            {% else %}
+                                <span class="icon_subtitle"><b>Delete from watchlist</b></span>
+                                <img src="{% static "auctions/star_2.svg" %}" alt="unfollow" class="listing_icon">
+                            {% endif %}
+                        </a>
+                    </div>
+                        {% if listing.creator == request.user and not listing.closed %}
+                    <div class="icon_container" style="margin-top: 10px;">
+                        <a href="{% url 'close' listing.id %}" style="text-decoration: none;">                          
+                            <span class="icon_subtitle"><b>Close this auction</b></span>
+                            <img src="{% static "auctions/close.svg" %}" alt="follow" class="listing_icon">
+                        </a>
+                    </div>
+                    <hr />
+                        {% else %}
+                            <hr />    
+                        {% endif %}
+                    {% else %}
+                        <hr />
+                    {% endif %}
                     <div class="listing_image_container_2">
                         {% if not listing.image_url %}
                             <h3 style="color: red">No photo</h3>
@@ -40,7 +55,13 @@
                             </p>
                         </div>
                         <div class="bids_container">
-                            <h3>Current price:  <b style="color:red">
+                            <h3>
+                                {% if listing.closed %}
+                                    Winning bid:
+                                {% else %}
+                                    Current price:  
+                                {% endif %}
+                                <b style="color:red">
                                 {% if not winning.value %}
                                     {{ listing.price }}$
                                 {% else %}
@@ -48,38 +69,65 @@
                                 {% endif %}
                             </b></h3>
                             <h6 style="color: rgb(119, 119, 119)">Starting price: {{ listing.price }}$</h6>
-                            <p style="margin-top: 25px"><b>Place your bid:</b></p>
-                            {% if messages %}
-                            <ul class="messages">
-                                {% for message in messages %}
-                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %} 
-                                style="color: red">{{ message }}</li>
-                                {% endfor %}
-                            </ul>
-                            {% endif %}
+                            {% if not listing.closed %}
+                                <p style="margin-top: 25px"><b>Place your bid:</b></p>
+                                {% if messages %}
+                                <ul class="messages">
+                                    {% for message in messages %}
+                                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %} 
+                                    style="color: red">{{ message }}</li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
 
-                            {% if not user.is_authenticated %}
-                                <h6 style="color: red">You must be logged in to place your bids</h6>
-                            {% elif listing.creator == request.user %}
-                                <h6 style="color: red">You cannot bid on an auction you have created.</h6>
+                                {% if not user.is_authenticated %}
+                                    <h6 style="color: red">You must be logged in to place your bids</h6>
+                                {% elif listing.creator == request.user %}
+                                    <h6 style="color: red">You cannot bid on an auction you have created.</h6>
+                                {% else %}
+                                    <form action="{% url 'bid' listing.id %}" 
+                                    style="display: flex; flex-direction: column; justify-content: center; align-items: center;"
+                                    method="POST">
+                                        {% csrf_token %}
+                                        {{ bid.bid_value }}
+                                        <input type="submit" class="btn btn-dark create_button" value="Bid">
+                                    </form>
+                                {% endif %}
                             {% else %}
-                                <form action="{% url 'bid' listing.id %}" 
-                                style="display: flex; flex-direction: column; justify-content: center; align-items: center;"
-                                method="POST">
-                                    {% csrf_token %}
-                                    {{ bid.bid_value }}
-                                    <input type="submit" class="btn btn-dark create_button" value="Bid">
-                                </form>
+                                <div 
+                                {% if winning %}
+                                    style="margin-top: 35px"
+                                {% else %}
+                                    style="margin-top: 65px"
+                                {% endif %}
+                                >
+                                    <h6 style="color: red">Listing closed!</h6>
+                                    {% if winning %}
+                                        {% if request.user == winning.user %}
+                                            <h6 style="color: red"><b>Congratulations!</b></h6>
+                                            <h6 style="color: red"><b>You are the winner of this auction!</b></h6>
+                                        {% else %}
+                                            <h6 style="color: red">Winner of this auction:</h6>
+                                            <h6 style="color: red"><b>{{ winning.user }}</b></h6>
+                                        {% endif %}
+                                    {% endif %} 
+                                </div>    
                             {% endif %}
 
                             <p style="margin-top:40px;">
-                                {{ bids.count }} bid(s) so far.
-                            </p> 
-                            <p>
-                                {% if winning.value %}
-                                    Currently winning: <b style="color:red">{{ winning.user }}</b> 
+                                {% if not listing.closed %}
+                                    {{ bids.count }} bid(s) so far.
+                                {% else %}
+                                    {{ bids.count }} bid(s).
                                 {% endif %}
                             </p>
+                            {% if not listing.closed %} 
+                                <p>
+                                    {% if winning.value %}
+                                        Currently winning: <b style="color:red">{{ winning.user }}</b> 
+                                    {% endif %}
+                                </p>
+                            {% endif %}
                         </div>
                     </div>
                     <div style="width: 80%; margin-top: 25px; padding-bottom: 50px; border-bottom: 1px solid #e0e0e0;">
