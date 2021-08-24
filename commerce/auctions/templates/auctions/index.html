@@ -2,11 +2,19 @@
 
 {% block body %}
     <div class="body_container">
-        <h2>Active Listings</h2>
+        {% if not watchlist %}
+            <h2>Active Listings</h2>
+        {% else %}
+            <h2>Watchlist</h2>
+        {% endif %}
         <div class="content_container">
-            {% if not listings %}
+            {% if not listings and not watchlist %}
                 <h4>
                     No active listings in this category
+                </h4>
+            {% elif not listings %}
+                <h4>
+                    No listings on your watchlist.
                 </h4>
             {% else %}
                 {% for listing in listings %}

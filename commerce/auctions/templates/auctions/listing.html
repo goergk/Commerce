@@ -1,4 +1,5 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block body %}
     <div class="body_container">
@@ -8,8 +9,18 @@
                 <div class="Listing_title_">
                     <h2>{{listing.title}}</h2>
                 </div>
-                <hr/>
                 <div class="listing_content_container_2">
+                        <div class="icon_container">
+                            <a href="{% url 'AddOrDelete' listing.id %}" style="text-decoration: none;">
+                                {% if not on_watchlist %}                              
+                                    <span class="icon_subtitle"><b>Add to watchlist</b></span>
+                                    <img src="{% static "auctions/star_1.svg" %}" alt="follow" class="follow_icon">
+                                {% else %}
+                                    <span class="icon_subtitle"><b>Delete from watchlist</b></span>
+                                    <img src="{% static "auctions/star_2.svg" %}" alt="follow" class="follow_icon">
+                                {% endif %}
+                             </a>
+                        </div>
                     <div class="listing_image_container_2">
                         {% if not listing.image_url %}
                             <h3 style="color: red">No photo</h3>

@@ -27,8 +27,8 @@ class Listing(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     closing_date = models.DateTimeField(null=True, blank=True)
     closed = models.BooleanField(default=False)
-    creator =  models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings_creators")
-    follower = models.ManyToManyField(User, related_name="followers", blank=True)
+    creator =  models.ForeignKey(User, on_delete=models.CASCADE, related_name="listing_creator")
+    follower = models.ManyToManyField(User, related_name="watchlist_listings", blank=True)
     category = models.ManyToManyField(Category, related_name="listings", blank=True)
     
     def __str__(self):

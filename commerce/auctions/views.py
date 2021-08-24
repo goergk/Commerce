@@ -108,6 +108,14 @@ def listing(request, listing_id):
     temp = listing.bids.aggregate(Max('value'))
     bid = listing.bids.filter(value=temp['value__max']).first()
 
+    user = request.user
+    watchlist = user.watchlist_listings.all()
+
+    if listing in watchlist:
+        on_watchlist = True
+    else:
+        on_watchlist = False
+
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "bids": bids,
@@ -115,6 +123,7 @@ def listing(request, listing_id):
         "categories": categories,
         "comment": NewCommentForm(),
         "comments": comments,
+        "on_watchlist": on_watchlist,
         "bid": NewBidForm()
     })
 
@@ -203,8 +212,24 @@ def newListing(request):
 
 @login_required(login_url='login')
 def watchlist(request):
-    return render(request, "auctions/watchlist.html")
+    user = request.user
+    listings = user.watchlist_listings.all()
+    return render(request, "auctions/index.html", {
+        "listings": listings,
+        "watchlist": True
+    })
 
+def AddOrDelete(request, listing_id):
+    user = request.user
+    listing = Listing.objects.get(pk=listing_id)
+    watchlist = user.watchlist_listings.all()
+
+    if listing not in watchlist:
+        user.watchlist_listings.add(listing)
+    else:
+        user.watchlist_listings.remove(listing)
+
+    return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
 
 @login_required(login_url='login')
 def createListing(request):
