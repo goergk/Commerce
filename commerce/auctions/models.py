@@ -22,6 +22,7 @@ class Listing(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=64)
     description = models.CharField(max_length=2500)
+    actual_price = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
     price = models.DecimalField(max_digits=7, decimal_places=2)
     image_url = models.CharField(max_length=500, blank=True)
     creation_date = models.DateTimeField(auto_now_add=True)

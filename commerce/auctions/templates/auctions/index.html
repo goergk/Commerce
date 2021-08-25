@@ -21,7 +21,11 @@
                     <a href="{% url 'listing' listing.id %}" style="text-decoration: none;">
                         <div class="Listing_container">
                             <div>
-                                <h2 class="listing_title">{{listing.title}}</h2>
+                                {% if listing.closed %}
+                                    <h2 class="listing_title" style="color: red;">{{listing.title}} [CLOSED]</h2>
+                                {% else %}
+                                    <h2 class="listing_title">{{listing.title}}</h2>
+                                {% endif %}
                             </div>
                             <hr/>
                             <div class="listing_content_container">
@@ -34,7 +38,19 @@
                                     {% endif %}
                                 </div>
                                 <div class="listing_desc_container">
-                                    <h3 style="color: black">Price: {{ listing.price }}$</h3>
+                                    <h3
+                                    {% if not listing.actual_price %}
+                                        style="color: black"
+                                    {% else %}
+                                        style="color: red"
+                                    {% endif %}>
+                                    Price:
+                                        {% if not listing.actual_price %}
+                                            {{ listing.price }}$
+                                        {% else %}
+                                            {{ listing.actual_price }}$
+                                        {% endif %}
+                                    </h3>
                                     <p style="color: black">
                                         {{ listing.description }}
                                     </p>

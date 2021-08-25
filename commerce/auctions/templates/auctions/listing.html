@@ -7,7 +7,11 @@
         <div class="content_container">
             <div class="Listing_">
                 <div class="Listing_title_">
-                    <h2>{{listing.title}}</h2>
+                    {% if listing.closed %}
+                        <h2 style="color: red;">{{listing.title}} [CLOSED]</h2>
+                    {% else %}
+                        <h2>{{listing.title}}</h2>
+                    {% endif %}
                 </div>
                 <div class="listing_content_container_2">
                     {% if user.is_authenticated %}
@@ -26,7 +30,7 @@
                     <div class="icon_container" style="margin-top: 10px;">
                         <a href="{% url 'close' listing.id %}" style="text-decoration: none;">                          
                             <span class="icon_subtitle"><b>Close this auction</b></span>
-                            <img src="{% static "auctions/close.svg" %}" alt="follow" class="listing_icon">
+                            <img src="{% static "auctions/close.svg" %}" alt="close" class="listing_icon">
                         </a>
                     </div>
                     <hr />
@@ -119,6 +123,7 @@
                                     {{ bids.count }} bid(s) so far.
                                 {% else %}
                                     {{ bids.count }} bid(s).
+                                    <h6 style="color: rgb(119, 119, 119)">Closed: {{ listing.closing_date }}</h6>
                                 {% endif %}
                             </p>
                             {% if not listing.closed %} 

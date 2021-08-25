@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.db.models import Max
 from django.shortcuts import render
 from django.urls import reverse
@@ -8,6 +8,7 @@ from django import forms
 from .models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from datetime import datetime
 
 class NewListingForm(forms.Form):
     title = forms.CharField(widget=forms.Textarea(attrs={'class': 'title_area'}))
@@ -17,7 +18,6 @@ class NewListingForm(forms.Form):
     category = forms.ModelMultipleChoiceField(required=False, label='Categories', queryset=Category.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'select_area'}))
 
-    
 
 class NewBidForm(forms.Form):
     bid_value = forms.DecimalField(widget=forms.NumberInput(attrs={'class': 'bid_area', 'placeholder': 'Bid'}))
@@ -28,10 +28,14 @@ class NewCommentForm(forms.Form):
 
 def index(request):
     listings = Listing.objects.filter(closed=False)
+    
+    for listing in listings:
+        if not listing.bids.all():
+            listing.actual_price = None
+
     return render(request, "auctions/index.html", {
         "listings": listings
     })
-
 
 def login_view(request):
 
@@ -101,7 +105,11 @@ def categories(request):
     })
 
 def listing(request, listing_id):
-    listing = Listing.objects.get(pk=listing_id)
+    try:
+        listing = Listing.objects.get(pk=listing_id)
+    except:
+        return HttpResponseRedirect(reverse("error"))
+    
     categories = listing.category.all()
     comments = listing.comments.all()
     bids = listing.bids.all()
@@ -157,49 +165,58 @@ def bid(request, listing_id):
         user = User.objects.get(pk=current_user.id)
         bids = listing.bids.all()
 
-        if not bids:
-            bid_value = listing.price
-        else:
+        if bids:
             temp = listing.bids.aggregate(Max('value'))
             bid = listing.bids.filter(value=temp['value__max']).first()
             bid_value = bid.value
 
         form = NewBidForm(request.POST)
         if form.is_valid():
-            if form.cleaned_data["bid_value"] <= listing.price or form.cleaned_data["bid_value"] <= bid_value:
-                messages.error(request, 'Your bid value must be higher than actual price!')
-            elif bid_value != listing.price:
-                if bid.user == request.user:
-                    messages.error(request, 'You cannot bid on a winning auction!')
+            if form.cleaned_data["bid_value"] < listing.price:
+                messages.error(request, 'Your bid value must be at least equal to the actual price!')
+            elif bids:
+                if form.cleaned_data["bid_value"] <= bid_value:
+                    messages.error(request, 'Your bid value must be higher than actual price!')
                 else:
-                    new_bid = Bid()
-                    new_bid.value = form.cleaned_data["bid_value"]
-                    new_bid.user = user
-                    new_bid.listing = listing
-                    new_bid.save()
+                    if bid.user == request.user:
+                        messages.error(request, 'You cannot bid on a winning auction!')
+                    else:
+                        new_bid = Bid()
+                        new_bid.value = form.cleaned_data["bid_value"]
+                        new_bid.user = user
+                        new_bid.listing = listing
+                        new_bid.save()
+                        listing.actual_price = form.cleaned_data["bid_value"]
+                        listing.save()
             else:
                 new_bid = Bid()
                 new_bid.value = form.cleaned_data["bid_value"]
                 new_bid.user = user
                 new_bid.listing = listing
                 new_bid.save()
+                listing.actual_price = form.cleaned_data["bid_value"]
+                listing.save()
 
         return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
 
 def close(request, listing_id):
-    listing = Listing.objects.get(pk=listing_id)
-    bids = listing.bids.all()
+    if request.user.is_authenticated:
+        listing = Listing.objects.get(pk=listing_id)
+        if request.user == listing.creator:
+            bids = listing.bids.all()
 
-    if bids:
-        temp = listing.bids.aggregate(Max('value'))
-        biggest_bid = listing.bids.filter(value=temp['value__max']).first()
-        user = User.objects.get(pk=biggest_bid.user.id)
-        listing.winner = user
+            if bids:
+                temp = listing.bids.aggregate(Max('value'))
+                biggest_bid = listing.bids.filter(value=temp['value__max']).first()
+                user = User.objects.get(pk=biggest_bid.user.id)
+                listing.winner = user
 
-    listing.closed = True
-    listing.save()
+            listing.closing_date = datetime.now()
+            listing.closed = True
+            listing.save()
 
-    return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+            return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+    return HttpResponseRedirect(reverse("error"))
 
 def newListing(request):
     if request.method == "POST":
@@ -237,21 +254,28 @@ def watchlist(request):
     })
 
 def AddOrDelete(request, listing_id):
-    user = request.user
-    listing = Listing.objects.get(pk=listing_id)
-    watchlist = user.watchlist_listings.all()
+    if request.user.is_authenticated:
+        user = request.user
+        listing = Listing.objects.get(pk=listing_id)
+        watchlist = user.watchlist_listings.all()
 
-    if listing not in watchlist:
-        user.watchlist_listings.add(listing)
-    else:
-        user.watchlist_listings.remove(listing)
+        if listing not in watchlist:
+            user.watchlist_listings.add(listing)
+        else:
+            user.watchlist_listings.remove(listing)
 
-    return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+        return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+    return HttpResponseRedirect(reverse("error"))
 
 @login_required(login_url='login')
 def createListing(request):
     return render(request, "auctions/create.html", {
         "listing": NewListingForm()
+    })
+
+def error(request):
+    return render(request, "auctions/error.html",{
+        "message": "Page not found"
     })
 
 
