@@ -22,7 +22,7 @@
                         <div class="Listing_container">
                             <div>
                                 {% if listing.closed %}
-                                    <h2 class="listing_title" style="color: red;">{{listing.title}} [CLOSED]</h2>
+                                    <h2 class="listing_title red_font">{{listing.title}} [CLOSED]</h2>
                                 {% else %}
                                     <h2 class="listing_title">{{listing.title}}</h2>
                                 {% endif %}
@@ -31,7 +31,10 @@
                             <div class="listing_content_container">
                                 <div class="listing_image_container">
                                     {% if not listing.image_url %}
-                                        <h3 style="color: red; padding-top: 75px;" class="listing_image"><b>No photo</b></h3>
+                                        <h3 class="listing_image red_font" 
+                                        style="padding-top: 75px;" >
+                                            <b>No photo</b>
+                                        </h3>
                                     {% else %}
                                         <img src={{ listing.image_url }} alt={{ listing.title }}
                                         class="listing_image">

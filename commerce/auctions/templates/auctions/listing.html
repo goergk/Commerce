@@ -8,7 +8,7 @@
             <div class="Listing_">
                 <div class="Listing_title_">
                     {% if listing.closed %}
-                        <h2 style="color: red;">{{listing.title}} [CLOSED]</h2>
+                        <h2 class="red_font">{{listing.title}} [CLOSED]</h2>
                     {% else %}
                         <h2>{{listing.title}}</h2>
                     {% endif %}
@@ -42,7 +42,7 @@
                     {% endif %}
                     <div class="listing_image_container_2">
                         {% if not listing.image_url %}
-                            <h3 style="color: red">No photo</h3>
+                            <h3 class="red_font">No photo</h3>
                         {% else %}
                             <img src={{ listing.image_url }} alt={{ listing.title }}
                             class="listing_image_2">
@@ -54,7 +54,7 @@
                             <h5>
                                 {{ listing.description }}
                             </h5>
-                            <p style="color: rgb(119, 119, 119); margin-top: 50px">
+                            <p class="listing_creation_desc">
                                 Created {{ listing.creation_date }} by <b>{{ listing.creator }}</b>
                             </p>
                         </div>
@@ -65,29 +65,29 @@
                                 {% else %}
                                     Current price:  
                                 {% endif %}
-                                <b style="color:red">
+                                <b class="red_font">
                                 {% if not winning.value %}
                                     {{ listing.price }}$
                                 {% else %}
                                     {{ winning.value }}$
                                 {% endif %}
                             </b></h3>
-                            <h6 style="color: rgb(119, 119, 119)">Starting price: {{ listing.price }}$</h6>
+                            <h6 class="medium_gray_font">Starting price: {{ listing.price }}$</h6>
                             {% if not listing.closed %}
                                 <p style="margin-top: 25px"><b>Place your bid:</b></p>
                                 {% if messages %}
                                 <ul class="messages">
                                     {% for message in messages %}
                                     <li{% if message.tags %} class="{{ message.tags }}"{% endif %} 
-                                    style="color: red">{{ message }}</li>
+                                    class="red_font">{{ message }}</li>
                                     {% endfor %}
                                 </ul>
                                 {% endif %}
 
                                 {% if not user.is_authenticated %}
-                                    <h6 style="color: red">You must be logged in to place your bids</h6>
+                                    <h6 class="red_font">You must be logged in to place your bids</h6>
                                 {% elif listing.creator == request.user %}
-                                    <h6 style="color: red">You cannot bid on an auction you have created.</h6>
+                                    <h6 class="red_font">You cannot bid on an auction you have created.</h6>
                                 {% else %}
                                     <form action="{% url 'bid' listing.id %}" 
                                     style="display: flex; flex-direction: column; justify-content: center; align-items: center;"
@@ -105,14 +105,14 @@
                                     style="margin-top: 65px"
                                 {% endif %}
                                 >
-                                    <h6 style="color: red">Listing closed!</h6>
+                                    <h6 class="red_font">Listing closed!</h6>
                                     {% if winning %}
                                         {% if request.user == winning.user %}
-                                            <h6 style="color: red"><b>Congratulations!</b></h6>
-                                            <h6 style="color: red"><b>You are the winner of this auction!</b></h6>
+                                            <h6 class="red_font"><b>Congratulations!</b></h6>
+                                            <h6 class="red_font"><b>You are the winner of this auction!</b></h6>
                                         {% else %}
-                                            <h6 style="color: red">Winner of this auction:</h6>
-                                            <h6 style="color: red"><b>{{ winning.user }}</b></h6>
+                                            <h6 class="red_font">Winner of this auction:</h6>
+                                            <h6 class="red_font"><b>{{ winning.user }}</b></h6>
                                         {% endif %}
                                     {% endif %} 
                                 </div>    
@@ -123,19 +123,20 @@
                                     {{ bids.count }} bid(s) so far.
                                 {% else %}
                                     {{ bids.count }} bid(s).
-                                    <h6 style="color: rgb(119, 119, 119)">Closed: {{ listing.closing_date }}</h6>
+                                    <h6 class="medium_gray_font">Closed: {{ listing.closing_date }}</h6>
                                 {% endif %}
                             </p>
                             {% if not listing.closed %} 
                                 <p>
                                     {% if winning.value %}
-                                        Currently winning: <b style="color:red">{{ winning.user }}</b> 
+                                        Currently winning: <b class="red_font">{{ winning.user }}</b> 
                                     {% endif %}
                                 </p>
                             {% endif %}
                         </div>
                     </div>
-                    <div style="width: 80%; margin-top: 25px; padding-bottom: 50px; border-bottom: 1px solid #e0e0e0;">
+
+                    <div class="main_categories_container">
                         <div class="categories_container_2">
                             Tags:             
                             {% for category in categories %}
@@ -147,7 +148,8 @@
                             {% endfor %}
                         </div> 
                     </div>
-                    <div style="width: 80%; margin-top: 15px">
+
+                    <div class="main_comments_container">
                         <div class="comments_container">
                             <h3 style="margin-bottom: 25px;">({{ comments.count }}) 
                                 {% if comments.count == 1 %}
@@ -175,7 +177,7 @@
                                     <p>
                                         <i>{{ comment.content }}</i>
                                     </p>
-                                    <p style="font-size: 14px; display: flex; justify-content: flex-end; margin: 10px 0px 10px 0px;">
+                                    <p class="comment_desc">
                                         {{ comment.date }} by&nbsp; <b>{{ comment.commentator }}</b>
                                     </p>
                                 </div>
